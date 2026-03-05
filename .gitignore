@@ -1,0 +1,6 @@
+# Remix IDE
+.states/
+artifacts/
+
+# Dependencies
+.deps/

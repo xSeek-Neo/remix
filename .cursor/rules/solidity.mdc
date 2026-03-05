@@ -1,0 +1,49 @@
+---
+description: Solidity 编码规范与最佳实践
+globs: **/*.sol
+alwaysApply: false
+---
+
+# Solidity 开发规范
+
+## 文件头部
+
+- 必须包含 SPDX 许可证标识
+- 使用 `pragma solidity ^0.8.7` 或更高版本
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
+```
+
+## 命名约定
+
+- 合约：PascalCase（如 `GlobalVariables`）
+- 函数/变量：camelCase（如 `globalVars`、`msgSender`）
+- 常量：全大写下划线（如 `MAX_SUPPLY`）
+- 自定义错误：PascalCase，以名词或形容词开头（如 `Unauthorized`）
+
+## 0.8+ 最佳实践
+
+- 使用内置溢出检查，无需 SafeMath
+- 优先使用 `custom error` 替代 `require(string)`，节省 gas
+
+```solidity
+// ❌ 避免
+require(msg.sender == owner, "Unauthorized");
+
+// ✅ 推荐
+error Unauthorized(address caller);
+if (msg.sender != owner) revert Unauthorized(msg.sender);
+```
+
+## 函数修饰符
+
+- `view`：只读状态变量和全局变量
+- `pure`：不读取任何状态
+- `external`：供外部调用，优先于 `public`（节省 gas）
+
+## 常见拼写
+
+- `msg.sender`（非 mgs.sender）
+- `block.timestamp`（非 block.timestap）
