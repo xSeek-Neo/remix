@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.20;
 
 // immutable: 部署时赋值一次，之后不可修改
 // 原理：值写入 bytecode 而非 storage 槽位，读取时直接内联到指令中，省 SLOAD 等 storage 操作

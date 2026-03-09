@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.20;
 
 contract Event {
     // 记录当前智能合约状态的方法 并不会记录在状态变量中 只会在区块链浏览器 或者 log中

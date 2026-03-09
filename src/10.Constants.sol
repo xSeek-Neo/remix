@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.20;
 
 contract Constants {
     // 常量 可以节约gas 命名规范： 大写、中间用_连接

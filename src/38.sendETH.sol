@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.20;
 
 // 3 ways to send ETH from a contract
 // transfer - 2300 gas, reverts on failure

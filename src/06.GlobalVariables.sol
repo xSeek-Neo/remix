@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.20;
 
 contract GlobalVariables {
     // 不用定义就能显示内容的变量 这些变量记录了链上的信息 和 账户的信息

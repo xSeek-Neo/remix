@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.20;
 
 // 特点： 1. 输入相同，输出一定相同 2. 输入不管有多大，输出是定长的 3.不可逆向运算
 // 用途： 1. 用于签名运算 或 获取特定id

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.20;
 
 /// @notice 根据函数签名字符串计算 4 字节选择器
 contract FunctionSelector {

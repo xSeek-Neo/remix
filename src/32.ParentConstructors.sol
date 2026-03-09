@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.20;
 
 // 调用父合约构造函数的 2 种方式
 // 初始化顺序：从左到右，从基类到派生类
