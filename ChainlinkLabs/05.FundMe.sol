@@ -96,6 +96,7 @@ contract FundMe {
         // }
         // ========== call 的几种用法 ==========
         // call 是底层调用，可转 ETH、传数据、接收返回值，推荐用于转账（不固定 2300 gas）
+        // 返回值均为 (bool success, bytes memory returnData)，需检查 success 并处理 revert
         //
         // 用法1：只转 ETH，不附带数据（当前用法）
         //   (bool success, ) = payable(addr).call{value: amount}("");
@@ -110,15 +111,37 @@ contract FundMe {
         //       abi.encodeWithSignature("foo(uint256)", 123)
         //   );
         //
-        // 用法4：用 abi.encodeWithSelector 指定 selector
+        // 用法4：用 abi.encodeWithSelector 指定 selector（不转 ETH）
         //   (bool success, bytes memory data) = addr.call(
         //       abi.encodeWithSelector(SomeInterface.someFunction.selector, arg1, arg2)
         //   );
         //
-        // 返回值：(bool success, bytes memory returnData)，需检查 success 并处理 revert
+        // 用法5：转 ETH + 用 selector 调用函数（如 DEX 用 ETH 换币）
+        //   (bool success, bytes memory data) = payable(addr).call{value: amount}(
+        //       abi.encodeWithSelector(IRouter.swapExactETHForTokens.selector, minOut, path, to, deadline)
+        //   );
+
         bool success;
         (success, ) = payable(msg.sender).call{value: address(this).balance}(
             ""
         );
+        require(success, "transfer failed");
+        delete fundersToAmount[msg.sender];
     }
+
+    function refund() external {
+        require(
+            converEthToUsd(address(this).balance) < TARGET,
+            "Target is reached, refund is not allowed"
+        );
+        require(fundersToAmount[msg.sender] != 0, "no funds to refund");
+
+        (bool success, ) = payable(msg.sender).call{
+            value: fundersToAmount[msg.sender]
+        }("");
+        require(success, "refund failed");
+        delete fundersToAmount[msg.sender];
+    }
+
+    // 1:35
 }
