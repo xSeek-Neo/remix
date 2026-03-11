@@ -10,9 +10,16 @@ contract FundMe {
     // 2.记录投资人并查看
     // 3.在锁定期内, 达到目标值 生产商可以提款
     // 4.在锁定期内如果达到目标值 投资人可以在锁定器后退款
+    // 最小100USD
 
-    address public owner;
+    mapping(address addr => uint256 amount) public fundersToAmount;
+    uint256 private constant MIN_FUNDING_AMOUNT = 100 * 10 ** 18; // USD
     AggregatorV3Interface internal dataFeed;
+    uint256 private constant TARGET = 1000 * 10 ** 18; // USD
+    address public owner;
+
+    uint256 deploymentTimestamp;
+    uint256 lockTime;
 
     error SendFailed(
         bool success,
@@ -21,19 +28,15 @@ contract FundMe {
         string txt
     );
 
-    constructor() {
+    constructor(uint256 _lockTime) {
         // spolia testnet
         dataFeed = AggregatorV3Interface(
             0x694AA1769357215DE4FAC081bf1f309aDC325306
         );
         owner = msg.sender;
+        deploymentTimestamp = block.timestamp;
+        lockTime = _lockTime;
     }
-
-    mapping(address addr => uint256 amount) public fundersToAmount;
-
-    // 最小100USD
-    uint256 private constant MIN_FUNDING_AMOUNT = 100 * 10 ** 18; // USD
-    uint256 private constant TARGET = 1000 * 10 ** 18; // USD
 
     modifier onlyOwner() {
         require(
@@ -43,10 +46,22 @@ contract FundMe {
         _;
     }
 
+    modifier windowClosed() {
+        require(
+            block.timestamp >= deploymentTimestamp + lockTime,
+            "window is not closed"
+        );
+        _;
+    }
+
     function fund() public payable {
         require(
             converEthToUsd(msg.value) >= MIN_FUNDING_AMOUNT,
             "Send more ETH"
+        );
+        require(
+            block.timestamp < deploymentTimestamp + lockTime,
+            "window is closed"
         );
         fundersToAmount[msg.sender] = msg.value;
     }
@@ -76,7 +91,7 @@ contract FundMe {
         owner = _newOwner;
     }
 
-    function getFund() external onlyOwner {
+    function getFund() external windowClosed onlyOwner {
         require(
             converEthToUsd(address(this).balance) >= TARGET,
             "Target not reached"
@@ -129,7 +144,7 @@ contract FundMe {
         delete fundersToAmount[msg.sender];
     }
 
-    function refund() external {
+    function refund() external windowClosed {
         require(
             converEthToUsd(address(this).balance) < TARGET,
             "Target is reached, refund is not allowed"
