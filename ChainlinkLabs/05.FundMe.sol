@@ -20,6 +20,8 @@ contract FundMe {
 
     uint256 deploymentTimestamp;
     uint256 lockTime;
+    address erc20Addr;
+    bool public getFundSuccess = false;
 
     error SendFailed(
         bool success,
@@ -54,9 +56,9 @@ contract FundMe {
         _;
     }
 
-    function fund() public payable {
+    function fund() external payable {
         require(
-            converEthToUsd(msg.value) >= MIN_FUNDING_AMOUNT,
+            convertEthToUsd(msg.value) >= MIN_FUNDING_AMOUNT,
             "Send more ETH"
         );
         require(
@@ -81,10 +83,27 @@ contract FundMe {
         return answer;
     }
 
-    function converEthToUsd(uint256 ethAmount) internal view returns (uint256) {
+    function convertEthToUsd(
+        uint256 ethAmount
+    ) internal view returns (uint256) {
         uint256 ethPrice = uint256(getChainlinkDataFeedLatestAnswer());
         // ethPrice
         return (ethAmount * ethPrice) / (10 ** 8);
+    }
+
+    function setFunderToAmount(
+        address funder,
+        uint256 amountToUpdate
+    ) external {
+        require(
+            msg.sender == erc20Addr,
+            "you do not have permission to call this funtion"
+        );
+        fundersToAmount[funder] = amountToUpdate;
+    }
+
+    function setErc20Addr(address _erc20Addr) public onlyOwner {
+        erc20Addr = _erc20Addr;
     }
 
     function transferOwnerShip(address _newOwner) public onlyOwner {
@@ -93,7 +112,7 @@ contract FundMe {
 
     function getFund() external windowClosed onlyOwner {
         require(
-            converEthToUsd(address(this).balance) >= TARGET,
+            convertEthToUsd(address(this).balance) >= TARGET,
             "Target not reached"
         );
 
@@ -142,11 +161,12 @@ contract FundMe {
         );
         require(success, "transfer failed");
         delete fundersToAmount[msg.sender];
+        getFundSuccess = true; // flag to check if the fund is successful
     }
 
     function refund() external windowClosed {
         require(
-            converEthToUsd(address(this).balance) < TARGET,
+            convertEthToUsd(address(this).balance) < TARGET,
             "Target is reached, refund is not allowed"
         );
         require(fundersToAmount[msg.sender] != 0, "no funds to refund");
@@ -157,6 +177,4 @@ contract FundMe {
         require(success, "refund failed");
         delete fundersToAmount[msg.sender];
     }
-
-    // 2:40:14
 }
