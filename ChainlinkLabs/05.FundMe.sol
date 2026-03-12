@@ -178,3 +178,13 @@ contract FundMe {
         delete fundersToAmount[msg.sender];
     }
 }
+
+// 验证步骤：
+// 1. 使用钱包地址1，部署 FundMe 合约 部署的时候传入锁定期 180s == 3 minutes
+// 2. 切换一个钱包地址2， 这个账户是众筹的参与人 调用fund函数 转账 1 ETH
+// 3. 切换包地址1 部署FundTokenERC20合约 传入FundMe合约地址
+// 4. 调用FundMe合约的setErc20Addr函数 传入FundTokenERC20合约地址
+// 5. 切换钱包地址2 调用mint 1000000000000000000 此时getFundSuccess 为false 会报错
+// 6. 切换钱包地址1 调用getFund函数 此时getFundSuccess 为true 会转账1 ETH到钱包地址1
+// 7. 切换钱包地址2 调用mint 1000000000000000000 此时getFundSuccess 为true
+// 8. 切换钱包地址2 调用balanceOf 查看余额 此时余额为1000000000000000000 此时可以在sepolia.etherscan.io TOKEN HOLDINGS 用钱包地址2的地址搜索
