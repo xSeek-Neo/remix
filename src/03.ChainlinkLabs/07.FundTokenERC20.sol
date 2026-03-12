@@ -43,6 +43,4 @@ contract FundTokenERC20 is ERC20 {
     }
 
     // burn 使用父合约中burn
-
-    // 3:03
 }
