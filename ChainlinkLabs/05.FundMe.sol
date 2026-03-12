@@ -188,3 +188,5 @@ contract FundMe {
 // 6. 切换钱包地址1 调用getFund函数 此时getFundSuccess 为true 会转账1 ETH到钱包地址1
 // 7. 切换钱包地址2 调用mint 1000000000000000000 此时getFundSuccess 为true
 // 8. 切换钱包地址2 调用balanceOf 查看余额 此时余额为1000000000000000000 此时可以在sepolia.etherscan.io TOKEN HOLDINGS 用钱包地址2的地址搜索
+// FundMe合约地址：0x259f6f5cF2960E3d8ec18E4Fc9373FA9b881Aad9
+// FundTokenERC20合约地址：0x46804007222089973A31E79094789773E6902322
